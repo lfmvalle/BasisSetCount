@@ -4,13 +4,14 @@
 
 Let `bscount` be the alias poiting to this script and `[output_file]` a generic output with 50 atoms.
 
-## Informations about atoms
-`$ bscount [output_file] -a` <br> Outputs a table with information about the atoms from `[output_file]`, but not their basis sets.
+## Basic arguments
+`$ bscount [output_file]` <br> Outputs the number of atoms, ghost atoms, and unique basis set from `[output_file]`. <br> This information is always printed.
 
-## Information about unique basis sets
-`$ bscount [output_file] -b` <br> Outputs a table with information about unique basis sets from `[output_file]`.
+`$ bscount [output_file] -a` <br> The **-a** argument outputs a table with detailed information about the atoms from `[output_file]`.
 
-## Combined information
-`$ bscount [output_file]` ; or <br> `$ bscount [output_file] -a -b` <br> Combines the functionalities of both atom and unique basis set information from `[output_file]`.
+`$ bscount [output_file] -b` <br> The **-b** argumenmt outputs a table with detailed information about unique basis sets from `[output_file]`.
+
+## Combining arguments
+`$ bscount [output_file] -a -b` <br> Outputs tables for both atom and unique basis set from `[output_file]`, respectively.
 
 > **NOTE:** <br> The order of the parameters passed in the script call dictates the order of the output.
