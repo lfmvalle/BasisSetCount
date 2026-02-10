@@ -1,4 +1,4 @@
-[↩ README](../README.md) | [◀ Core-Effective Potential basis sets](cep.md)
+[↩ README](../README.md) | [◀ Effective Core Potential basis sets](ecp.md)
 
 # Ghost atoms
 

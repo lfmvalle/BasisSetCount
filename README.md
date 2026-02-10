@@ -16,6 +16,6 @@ Follow [these steps](docs/installation.md) to install and use this script.
 
 ## Other topics
 
-[Core-Effective Potential basis sets](docs/cep.md)
+[Effective Core Potential basis sets](docs/ecp.md)
 
 [Ghost atoms](docs/ghost.md)

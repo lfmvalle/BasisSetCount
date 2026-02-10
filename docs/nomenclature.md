@@ -1,4 +1,4 @@
-[↩ README](../README.md) | [◀ Enumeration of $m_l$ functions](usage_enum.md) | [ Core-Effective Potential basis sets ▶](cep.md)
+[↩ README](../README.md) | [◀ Enumeration of $m_l$ functions](usage_enum.md) | [ Effective Core Potential basis sets ▶](ecp.md)
 
 # Nomenclature of $m_l$ functions
 
