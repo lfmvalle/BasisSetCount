@@ -1,6 +1,6 @@
 # C23 BasisSetCount
 
-This script reads a **CRYSTAL23** output file and retrieves information about atoms and unique basis sets. It also enumerates the $m_l$ functions of individual atoms - a tedious and time-consuming task when done manually.
+This script reads a **CRYSTAL23** output file and retrieves information about atoms and unique basis sets. It also **enumerates** the atomic orbitals of individual atoms - a tedious and time-consuming task when done manually.
 
 ## How to install
 
