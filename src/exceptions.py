@@ -1,14 +1,34 @@
-class OutputException(Exception):
-    """
-    The ***Output Exception*** class is used when the end of the output file is reached during the parsing and no Basis Set information is gathered.
-    """
+from pathlib import Path
+import traceback
 
-class ParsingException(Exception):
-    """
-    The ***Parsing Exception*** class is used when a regex match is expected in the parsing logic but it does not occur.
-    """
+import text_style
 
-class GhostException(Exception):
-    """
-    The ***Ghost Exception*** class is used when the parser finds a ghost atom in the Basis Set section that was not previously declared in the ghost atoms section.
-    """
+
+class ApplicationException(Exception): ...
+class ParsingException(ApplicationException): ...
+class OutputException(ApplicationException): ...
+class GhostException(ApplicationException): ...
+class PeriodicTableException(ApplicationException): ...
+
+
+def format_traceback(exception: BaseException) -> str:
+    tb = traceback.TracebackException.from_exception(exception)
+
+    lines = []
+
+    for frame in tb.stack:
+        filename = Path(frame.filename).name  # avoid exposing user paths, cleaner output
+        lines.append(f'File {text_style.YELLOW}"{filename}"{text_style.NONE}, line {text_style.YELLOW}{frame.lineno}{text_style.NONE}, in {text_style.YELLOW}{frame.name}{text_style.NONE}')
+        if frame.line:
+            lines.append(f"  {text_style.RED}{frame.line.strip()}{text_style.NONE}")
+
+    exception_name = type(exception).__name__
+    lines.append(f"{text_style.BOLD}{text_style.PURPLE}{exception_name}{text_style.NONE}{text_style.PURPLE}: {exception}{text_style.NONE}")
+
+    return "\n".join(lines)
+
+def unexpected_error(exception: BaseException) -> None:
+    print(f"{text_style.BOLD}{text_style.RED}[ UNEXPECTED ERROR - PROGRAM STOPPED ]{text_style.NONE}")
+    print(f"{" Traceback (most recent call last) ":=^80}")
+    print(format_traceback(exception))
+    print("=" * 80)
