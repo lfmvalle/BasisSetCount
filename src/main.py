@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 from time import perf_counter
 
 from arguments import parse_arguments
