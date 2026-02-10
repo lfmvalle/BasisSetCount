@@ -10,9 +10,9 @@ Follow [these steps](docs/installation.md) to install and use this script.
 
 [Atoms and unique basis sets information](docs/usage_info.md)
 
-[Enumeration of $m_l$ functions](docs/usage_enum.md)
+[Enumeration of atomic orbitals](docs/usage_enum.md)
 
-[Nomenclature of $m_l$ functions](docs/nomenclature.md)
+[Nomenclature of atomic orbitals](docs/nomenclature.md)
 
 ## Other topics
 

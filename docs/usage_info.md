@@ -1,4 +1,4 @@
-[↩ README](../README.md) | [◀ Installation](installation.md) | [Enumeration of $m_l$ functions ▶](usage_enum.md)
+[↩ README](../README.md) | [◀ Installation](installation.md) | [Enumeration of atomic orbitals ▶](usage_enum.md)
 
 # Atoms and unique basis sets information
 

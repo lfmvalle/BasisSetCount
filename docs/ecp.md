@@ -1,4 +1,4 @@
-[↩ README](../README.md) | [◀ Nomenclature for the enumeration of $m_l$ functions](nomenclature.md) | [ Ghost atoms ▶](ghost.md)
+[↩ README](../README.md) | [◀ Nomenclature for the enumeration of atomic orbitals](nomenclature.md) | [ Ghost atoms ▶](ghost.md)
 
 # Effective Core Potential basis sets
 
