@@ -14,5 +14,5 @@ It may work with older versions, but you'll have to manually edit the scripts to
 4. Call the script using the interpreter: <br> `$ python3 path/to/main.py`. <br> It must output an error message asking for a CRYSTAL23 output file.
 
 ## 3. Tips
-- If you are a Linux user, you can execute it directly with: <br> `$ . path/to/main.py`
+- If you are a Linux user, you can execute it directly with: <br> `$ path/to/main.py`
 - I strongly suggest using an alias to call the script anywhere, such as `basis` or `bscount`: <br> `$ bscount output_file [params]`
