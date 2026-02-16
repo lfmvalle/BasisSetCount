@@ -28,7 +28,7 @@ class PeriodicTable:
                 if element.symbol == key:
                     return element
         elif isinstance(key, int):  # Lookup by atomic number
-            # for Core-Effective Potential basis sets
+            # for Effective Core Potential basis sets
             if key > 200:
                 key %= 200
             if key < 0 or key > 118:
