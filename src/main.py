@@ -6,7 +6,8 @@ from arguments import parse_arguments
 from exceptions import ApplicationException, unexpected_error
 from logger import Logger
 from output_parser import OutputParser
-import text_style
+from printer import Printer
+from text_style import TextStyle
 
 
 def main() -> None:
@@ -25,16 +26,18 @@ def main() -> None:
         pass
     t1 = perf_counter()
     delta_time = round((t1 - t0) * 1000, 1)
-    Logger.debug(f"{text_style.DARK}{f" Output parsing done in {delta_time} ms ":~^80}{text_style.NONE}")
+    Logger.debug(f"{TextStyle.DARK}{f" Output parsing done in {delta_time} ms ":~^80}{TextStyle.NONE}")
 
     # create the output obj and parse the arguments
     output_obj = parser.build()
+    printer = Printer(output_obj)
     for arg in arguments.args:
-        output_obj.parse_argument(arg)
-
+        tables = printer.parse_argument(arg)
+        for table in tables:
+            print(table)
 
 if __name__ == '__main__':
-    print(f"{text_style.BOLD}{text_style.CYAN}[ C23 BASIS SET COUNTER ]{text_style.NONE}")
+    print(f"{TextStyle.BOLD + TextStyle.CYAN}[ C23 BASIS SET COUNTER ]{TextStyle.NONE}")
     
     try:
         main()
@@ -43,4 +46,4 @@ if __name__ == '__main__':
     except Exception as error:
         unexpected_error(error)
     finally:
-        print(f"{text_style.BOLD}{text_style.CYAN}[ FINISHED ]{text_style.NONE}")
+        print(f"{TextStyle.BOLD + TextStyle.CYAN}[ FINISHED ]{TextStyle.NONE}")

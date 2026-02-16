@@ -1,13 +1,15 @@
 from enum import Enum
 
 import text_style
+from text_style import TextStyle
 
 
 class LogLevel(Enum):
     INFO = 0,
-    WARNING = 1,
-    ERROR = 2
-    DEBUG = 3,
+    REQUEST = 1
+    WARNING = 2,
+    ERROR = 3
+    DEBUG = 4,
 
 
 class Logger:
@@ -15,22 +17,28 @@ class Logger:
 
     @staticmethod
     def _log_message(level: LogLevel, message: str) -> None:
-        log_string = ""
+        log_string = f"{TextStyle.BOLD}"
         match level:
             case LogLevel.INFO:
-                log_string += f"{text_style.BOLD}[ INFO ]{text_style.NONE} "
+                log_string += f"[ INFO ]{TextStyle.NONE} "
+            case LogLevel.REQUEST:
+                log_string += f"{TextStyle.GREEN}[ REQUEST ]{TextStyle.NONE} "
             case LogLevel.WARNING:
-                log_string += f"{text_style.BOLD}{text_style.YELLOW}[ WARNING ]{text_style.NONE} "
+                log_string += f"{TextStyle.YELLOW}[ WARNING ]{TextStyle.NONE} "
             case LogLevel.ERROR:
-                log_string += f"{text_style.BOLD}{text_style.RED}[ ERROR ]{text_style.NONE} "
+                log_string += f"{TextStyle.RED}[ ERROR ]{TextStyle.NONE} "
             case LogLevel.DEBUG:
-                log_string += f"{text_style.BOLD}{text_style.PURPLE}[ DEBUG ]{text_style.NONE} "
+                log_string += f"{TextStyle.PURPLE}[ DEBUG ]{TextStyle.NONE} "
         log_string += message
         print(log_string)
 
     @classmethod
     def info(cls, message: str) -> None:
         return cls._log_message(LogLevel.INFO, message)
+    
+    @classmethod
+    def request(cls, message: str) -> None:
+        return cls._log_message(LogLevel.REQUEST, message)
 
     @classmethod
     def warn(cls, message: str) -> None:

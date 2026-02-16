@@ -10,7 +10,7 @@ from exceptions import OutputException, ParsingException, GhostException
 from logger import Logger
 from periodic_table import PeriodicTable
 import regex_pattern
-import text_style
+from text_style import TextStyle
 
 
 class OutputRegion(Enum):
@@ -51,10 +51,10 @@ class OutputParser:
     def feed(self, line: str) -> None:
         # Change output region
         if "ATOMS TRANSFORMED INTO GHOSTS" in line and self.current_output_region:
-            Logger.debug(f"Entering output region: {text_style.PURPLE}declaration of ghost atoms{text_style.NONE}.")
+            Logger.debug(f"Entering output region: {TextStyle.PURPLE}declaration of ghost atoms{TextStyle.NONE}.")
             self.current_output_region = OutputRegion.GhostRegion
         elif "LOCAL ATOMIC FUNCTIONS BASIS SET" in line:
-            Logger.debug(f"Entering output region: {text_style.PURPLE}definition of basis sets{text_style.NONE}.")
+            Logger.debug(f"Entering output region: {TextStyle.PURPLE}definition of basis sets{TextStyle.NONE}.")
             self.current_output_region = OutputRegion.BasisSetRegion
         elif "INFORMATION" in line and self.current_output_region == OutputRegion.BasisSetRegion:
             self.current_output_region = OutputRegion.StopRegion
@@ -62,7 +62,7 @@ class OutputParser:
         # Act according to output region
         match self.current_output_region:
             case OutputRegion.StopRegion:
-                Logger.debug(f"Stopping output parsing: {text_style.PURPLE}end of the basis set region{text_style.NONE}.")
+                Logger.debug(f"Stopping output parsing: {TextStyle.PURPLE}end of the basis set region{TextStyle.NONE}.")
                 raise StopIteration
             case OutputRegion.GhostRegion:
                 return self._parse_ghost_line(line)
@@ -79,18 +79,18 @@ class OutputParser:
         for atom in self.atoms:
             # ensure all atoms point to a basis set
             if atom.basis_set is None:
-                raise OutputException(f"No basis set attributed to {text_style.PURPLE}Atom {atom.label}{text_style.NONE}.")
+                raise OutputException(f"No basis set attributed to {TextStyle.PURPLE}Atom {atom.label}{TextStyle.NONE}.")
             # count ghost atoms 
             if atom.is_ghost:
                 encountered_ghosts += 1
         
         # verifify the number of ghost atoms
         if encountered_ghosts != expected_ghosts:
-            raise OutputException(f"Expected {text_style.PURPLE}{expected_ghosts}{text_style.NONE} ghost atoms: found only {text_style.PURPLE}{encountered_ghosts}{text_style.NONE}.")
+            raise OutputException(f"Expected {TextStyle.PURPLE}{expected_ghosts}{TextStyle.NONE} ghost atoms: found only {TextStyle.PURPLE}{encountered_ghosts}{TextStyle.NONE}.")
         
-        Logger.info(f"Number of atoms: {text_style.PURPLE}{len(self.atoms)}{text_style.NONE}")
-        Logger.info(f"Number of ghost atoms: {text_style.PURPLE}{encountered_ghosts}{text_style.NONE}")
-        Logger.info(f"Number of unique basis sets: {text_style.PURPLE}{len(self.basis_sets)}{text_style.NONE}")
+        Logger.info(f"Number of atoms: {TextStyle.PURPLE}{len(self.atoms)}{TextStyle.NONE}")
+        Logger.info(f"Number of ghost atoms: {TextStyle.PURPLE}{encountered_ghosts}{TextStyle.NONE}")
+        Logger.info(f"Number of unique basis sets: {TextStyle.PURPLE}{len(self.basis_sets)}{TextStyle.NONE}")
 
         Logger.debug("Building output object...")
         return CrystalOutput(self.atoms, self.basis_sets)
@@ -116,7 +116,7 @@ class OutputParser:
                             new_atom.element = PeriodicTable.get_element(int(atomic_number))
                             break
                     if new_atom.element.atomic_number == 0:
-                        raise GhostException(f"Unexpected ghost atom found: {text_style.PURPLE}Atom {new_atom.label}{text_style.NONE}")
+                        raise GhostException(f"Unexpected ghost atom found: {TextStyle.PURPLE}Atom {new_atom.label}{TextStyle.NONE}")
 
                 # Exists a basis set for this atom?
                 for basis_set in self.basis_sets:

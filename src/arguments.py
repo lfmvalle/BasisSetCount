@@ -7,7 +7,7 @@ import sys
 from time import perf_counter
 
 import regex_pattern
-import text_style
+from text_style import TextStyle
 from logger import Logger
 
 
@@ -93,17 +93,17 @@ class ArgumentHandler:
                     Logger.info("Debug mode is now active")
         
         for arg in args:
-            Logger.debug(f"Parsing: {text_style.PURPLE}{arg}{text_style.NONE}")
+            Logger.debug(f"Parsing: {TextStyle.PURPLE}{arg}{TextStyle.NONE}")
             parsed = ArgumentParser.parse(arg)
             
             if not parsed:
-                Logger.warn(f"Ignoring invalid argument: {text_style.BOLDITALIC}{arg}{text_style.NONE}")
+                Logger.warn(f"Ignoring invalid argument: {TextStyle.BOLDITALIC}{arg}{TextStyle.NONE}")
                 continue
 
             self._register_arg(parsed)
         t1 = perf_counter()
         delta_time = round((t1 - t0) * 1000, 1)
-        Logger.debug(f"{text_style.DARK}{f" Argument parsing done in {delta_time} ms ":~^80}{text_style.NONE}")
+        Logger.debug(f"{TextStyle.DARK}{f" Argument parsing done in {delta_time} ms ":~^80}{TextStyle.NONE}")
     
     def _register_arg(self, arg: Argument) -> None:
         if isinstance(arg, FileArgument):
@@ -112,15 +112,15 @@ class ArgumentHandler:
             self._file = arg
         else:
             if arg in self.args:
-                Logger.warn(f"Ignoring duplicated argument: {text_style.BOLDITALIC}{arg.value}{text_style.NONE}")
+                Logger.warn(f"Ignoring duplicated argument: {TextStyle.BOLDITALIC}{arg.value}{TextStyle.NONE}")
             else:
                 self.args.append(arg)
         
-        Logger.debug(f"Done: {text_style.PURPLE}{repr(arg)}{text_style.NONE}")
+        Logger.debug(f"Done: {TextStyle.PURPLE}{repr(arg)}{TextStyle.NONE}")
     
     def get_output_file(self) -> Path:
         if not self._file:
-            raise ParsingException(f"A {text_style.BOLD}CRYSTAL output file{text_style.NONE} must be provided.")
+            raise ParsingException(f"A {TextStyle.BOLD}CRYSTAL output file{TextStyle.NONE} must be provided.")
         return Path(self._file.value)
     
     @property
@@ -138,6 +138,6 @@ class ArgumentHandler:
 
 def parse_arguments() -> ArgumentHandler:
     if not len(sys.argv) > 1:
-        raise ParsingException(f"Invalid number of arguments on script call. A {text_style.BOLD}CRYSTAL output file{text_style.NONE} must be provided.")
+        raise ParsingException(f"Invalid number of arguments on script call. A {TextStyle.BOLD}CRYSTAL output file{TextStyle.NONE} must be provided.")
     
     return ArgumentHandler(sys.argv[1:])
