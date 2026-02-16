@@ -1,4 +1,14 @@
-[↩ README](../README.md) | [◀ Nomenclature for the enumeration of atomic orbitals](nomenclature.md) | [ Ghost atoms ▶](ghost.md)
+<p align="center">
+  <a href="../README.md">
+    <img src="https://img.shields.io/badge/↩-README-white?style=for-the-badge">
+  </a>
+  <a href="nomenclature.md">
+    <img src="https://img.shields.io/badge/◀ - Nomenclature of atomic orbitals-blue?style=for-the-badge">
+  </a>
+  <a href="ghost.md">
+    <img src="https://img.shields.io/badge/▶ - Ghost atoms-blue?style=for-the-badge">
+  </a>
+</p>
 
 # Effective Core Potential basis sets
 

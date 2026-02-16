@@ -1,4 +1,11 @@
-[↩ README](../README.md) | [◀ Effective Core Potential basis sets](ecp.md)
+<p align="center">
+  <a href="../README.md">
+    <img src="https://img.shields.io/badge/↩-README-white?style=for-the-badge">
+  </a>
+  <a href="ecp.md">
+    <img src="https://img.shields.io/badge/◀ - Effective Core Potential basis sets-blue?style=for-the-badge">
+  </a>
+</p>
 
 # Ghost atoms
 

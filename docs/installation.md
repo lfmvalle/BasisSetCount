@@ -1,4 +1,11 @@
-[↩ README](../README.md) | [Information about atoms and unique basis sets ▶](usage_info.md)
+<p align="center">
+  <a href="../README.md">
+    <img src="https://img.shields.io/badge/↩-README-white?style=for-the-badge">
+  </a>
+  <a href="usage_info.md">
+    <img src="https://img.shields.io/badge/▶ - Atoms and unique basis sets information-blue?style=for-the-badge">
+  </a>
+</p>
 
 # Installing the script
 

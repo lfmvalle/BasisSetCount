@@ -1,4 +1,14 @@
-[↩ README](../README.md) | [◀ Atoms and unique basis sets information](usage_info.md) | [Nomenclature of atomic orbitals ▶](nomenclature.md)
+<p align="center">
+  <a href="../README.md">
+    <img src="https://img.shields.io/badge/↩-README-white?style=for-the-badge">
+  </a>
+  <a href="usage_info.md">
+    <img src="https://img.shields.io/badge/◀ - Atoms and unique basis set information-blue?style=for-the-badge">
+  </a>
+  <a href="nomenclature.md">
+    <img src="https://img.shields.io/badge/▶ - Nomenclature of atomic orbitals-blue?style=for-the-badge">
+  </a>
+</p>
 
 # Enumeration of atomic orbitals
 

@@ -1,4 +1,14 @@
-[↩ README](../README.md) | [◀ Installation](installation.md) | [Enumeration of atomic orbitals ▶](usage_enum.md)
+<p align="center">
+  <a href="../README.md">
+    <img src="https://img.shields.io/badge/↩-README-white?style=for-the-badge">
+  </a>
+  <a href="installation.md">
+    <img src="https://img.shields.io/badge/◀ - Installation-blue?style=for-the-badge">
+  </a>
+  <a href="usage_enum.md">
+    <img src="https://img.shields.io/badge/▶ - Enumeration of atomic orbitals-blue?style=for-the-badge">
+  </a>
+</p>
 
 # Atoms and unique basis sets information
 

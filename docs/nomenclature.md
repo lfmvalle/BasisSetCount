@@ -1,4 +1,14 @@
-[↩ README](../README.md) | [◀ Enumeration of atomic orbitals](usage_enum.md) | [ Effective Core Potential basis sets ▶](ecp.md)
+<p align="center">
+  <a href="../README.md">
+    <img src="https://img.shields.io/badge/↩-README-white?style=for-the-badge">
+  </a>
+  <a href="usage_enum.md">
+    <img src="https://img.shields.io/badge/◀ - Enumeration of atomic orbitals-blue?style=for-the-badge">
+  </a>
+  <a href="ecp.md">
+    <img src="https://img.shields.io/badge/▶ - Effective Core Potential basis sets-blue?style=for-the-badge">
+  </a>
+</p>
 
 # Nomenclature of atomic orbitals
 
