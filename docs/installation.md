@@ -7,7 +7,7 @@
   </a>
 </p>
 
-# Installing the script
+# Installing BasisSetCount
 
 ## 1. Requirements
 
