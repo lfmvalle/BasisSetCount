@@ -1,6 +1,6 @@
 from arguments import *
 from atom import Atom
-from basis_set import BasisSet, FunctionType, AtomicFunctions
+from basis_set import FunctionType, AtomicFunctions
 from crystal_output import CrystalOutput
 from logger import Logger
 from table import Table, Header, Row, Cell, CellAlignment, CellContentType
@@ -68,12 +68,29 @@ class Printer:
             for atom in self.output.atoms:
                 if atom.basis_set == basis_set:
                     atoms_using += 1
-            basis_set_header_row = Row([
-                Cell(f"{basis_set.element.symbol} (Z = {basis_set.element.atomic_number})", alignment=CellAlignment.CENTER, size=48),
-                Cell(f"Used by {atoms_using} atoms", alignment=CellAlignment.CENTER, size=32)
+
+            # header - title
+            title = f"{basis_set.element.symbol} (Z = {basis_set.element.atomic_number}) - "
+            title += "Effective Core Potential basis set" if basis_set.pseudo else "All-electron basis set"
+            title_row = Row([
+                Cell(title, alignment=CellAlignment.CENTER, size=80),
             ])
-            basis_set_header_row.add_style(TextStyle.BOLD)
-            basis_set_header_row.add_style(TextStyle.PURPLE)
+            title_row.add_style(TextStyle.BOLD)
+            title_row.add_style(TextStyle.PURPLE)
+
+            # header - atoms using the basis set
+            atoms_using_row = Row([
+                Cell(f"Used by {atoms_using} atoms", alignment=CellAlignment.CENTER, size=80)
+            ])
+            atoms_using_row.add_style(TextStyle.BOLD)
+            atoms_using_row.add_style(TextStyle.PURPLE)
+
+            # header - separator
+            separator = Row([
+                Cell("~" * 80, size=80)
+            ])
+
+            # header - table columns
             table_header_row = Row([
                 Cell("Atomic function", alignment=CellAlignment.CENTER, size=16),
                 Cell("Exponent", alignment=CellAlignment.CENTER, size=16),
@@ -82,7 +99,7 @@ class Printer:
                 Cell("d/f/g coeff.", alignment=CellAlignment.CENTER, size=16)
             ])
             table_header_row.add_style(TextStyle.BOLD)
-            header = Header([basis_set_header_row, table_header_row])
+            header = Header([title_row, atoms_using_row, separator, table_header_row])
             table = Table(header, [])
 
             for basis_function in basis_set.basis_functions:
@@ -143,18 +160,34 @@ class Printer:
             FunctionType.G: AtomicFunctions.G.value,
         }
 
-        atom_header_row = Row([
+        # header - title
+        title_row = Row([
             Cell(f"Atom {atom.label} - {atom.element.symbol} (ghost)" if atom.is_ghost else f"Atom {atom.label} - {atom.element.symbol}", size=48, alignment=CellAlignment.CENTER)
         ])
-        atom_header_row.add_style(TextStyle.BOLD)
-        atom_header_row.add_style(TextStyle.PURPLE)
-        header_row = Row([
+        title_row.add_style(TextStyle.BOLD)
+        title_row.add_style(TextStyle.PURPLE)
+
+        # header - basis set type
+        basis_set_type_row = Row([
+            Cell("Effective Core Potential basis set" if atom.basis_set.pseudo else "All-electron basis set", size=48, alignment=CellAlignment.CENTER)
+        ])
+        basis_set_type_row.add_style(TextStyle.BOLD)
+        basis_set_type_row.add_style(TextStyle.PURPLE)
+
+        # header - separator
+        separator = Row([
+            Cell("-" * 48, size=48)
+        ])
+
+        # header - table columns
+        table_header_row = Row([
             Cell("Atomic function", size=16, alignment=CellAlignment.CENTER),
             Cell("Index", size=16, alignment=CellAlignment.CENTER),
             Cell("Atomic orbital", size=16, alignment=CellAlignment.CENTER)
         ])
-        header_row.add_style(TextStyle.BOLD)
-        header = Header([atom_header_row, header_row])
+        table_header_row.add_style(TextStyle.BOLD)
+        
+        header = Header([title_row, basis_set_type_row, separator, table_header_row])
         table = Table(header, [])
 
         for basis_function in atom.basis_set.basis_functions:

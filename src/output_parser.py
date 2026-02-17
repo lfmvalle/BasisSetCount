@@ -15,17 +15,19 @@ from text_style import TextStyle
 
 class OutputRegion(Enum):
     InitialRegion = 0
-    GhostRegion = 1
-    BasisSetRegion = 2
-    StopRegion = 3
+    PseudoRegion = 1
+    GhostRegion = 2
+    BasisSetRegion = 3
+    StopRegion = 4
 
 
 class LineType(Enum):
-    GhostAtomsLine = 0
-    AtomLine = 1
-    BasisFunctionLine = 2
-    PrimitiveFunctionLine = 3
-    Nothing = 4
+    PseudoLine = 0
+    GhostAtomsLine = 1
+    AtomLine = 2
+    BasisFunctionLine = 3
+    PrimitiveFunctionLine = 4
+    Nothing = 5
 
 
 @dataclass
@@ -43,6 +45,7 @@ class OutputParser:
         self.current_output_region = OutputRegion.InitialRegion
 
         self.ghost_atoms_tuples = []
+        self.pseudo_basis_sets = []
 
         self.current_atom: Optional[Atom] = None
         self.current_basis_set: Optional[BasisSet] = None
@@ -50,7 +53,10 @@ class OutputParser:
 
     def feed(self, line: str) -> None:
         # Change output region
-        if "ATOMS TRANSFORMED INTO GHOSTS" in line and self.current_output_region:
+        if "PSEUDOPOTENTIAL INFORMATION" in line and self.current_output_region == OutputRegion.InitialRegion:
+            Logger.debug(f"Entering pseudopotential region: {TextStyle.PURPLE}declaration of effective core potential basis sets{TextStyle.NONE}.")
+            self.current_output_region = OutputRegion.PseudoRegion
+        elif "ATOMS TRANSFORMED INTO GHOSTS" in line:
             Logger.debug(f"Entering output region: {TextStyle.PURPLE}declaration of ghost atoms{TextStyle.NONE}.")
             self.current_output_region = OutputRegion.GhostRegion
         elif "LOCAL ATOMIC FUNCTIONS BASIS SET" in line:
@@ -64,6 +70,8 @@ class OutputParser:
             case OutputRegion.StopRegion:
                 Logger.debug(f"Stopping output parsing: {TextStyle.PURPLE}end of the basis set region{TextStyle.NONE}.")
                 raise StopIteration
+            case OutputRegion.PseudoRegion:
+                return self._parse_pseudo_line(line)
             case OutputRegion.GhostRegion:
                 return self._parse_ghost_line(line)
             case OutputRegion.BasisSetRegion:
@@ -95,6 +103,12 @@ class OutputParser:
         Logger.debug("Building output object...")
         return CrystalOutput(self.atoms, self.basis_sets)
     
+    def _parse_pseudo_line(self, line: str) -> None:
+        match = self._get_line_type(line)
+
+        if match.line_type != LineType.Nothing:
+            self.pseudo_basis_sets += match.content
+
     def _parse_ghost_line(self, line: str) -> None:
         match = self._get_line_type(line)
 
@@ -125,7 +139,13 @@ class OutputParser:
                         new_atom.basis_set = basis_set
                 # No, create a new basis set
                 if new_atom.basis_set is None:
-                    new_basis_set = BasisSet(new_atom.element, [])
+                    is_pseudo_basis_set = False
+                    for pseudo in self.pseudo_basis_sets:
+                        element = PeriodicTable.get_element(int(pseudo))
+                        if element == new_atom.element:
+                            is_pseudo_basis_set = True
+                            break
+                    new_basis_set = BasisSet(new_atom.element, [], is_pseudo_basis_set)
                     self.basis_sets.append(new_basis_set)
                     new_atom.basis_set = new_basis_set
                 self.atoms.append(new_atom)
@@ -157,6 +177,9 @@ class OutputParser:
         if self.current_output_region == OutputRegion.GhostRegion:
             if ghost_match := re.findall(regex_pattern.GHOST_REGEX, line):
                 return LineMatch(LineType.GhostAtomsLine, ghost_match)
+        if self.current_output_region == OutputRegion.PseudoRegion:
+            if pseudo_match := re.findall(regex_pattern.PSEUDO_REGEX, line):
+                return LineMatch(LineType.PseudoLine, pseudo_match)
         return LineMatch(LineType.Nothing, [])
 
     @staticmethod

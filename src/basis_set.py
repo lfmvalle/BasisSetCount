@@ -64,5 +64,4 @@ class BasisFunction:
 class BasisSet:
     element: Element
     basis_functions: list[BasisFunction]
-
-
+    pseudo: bool = False

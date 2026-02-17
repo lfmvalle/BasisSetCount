@@ -12,6 +12,10 @@
 
 # Effective Core Potential basis sets
 
-In the present version of this script, *Effective Core Potential* (ECP) basis sets cannot be distinguished from *all-electron* basis sets, because there is no difference between parsing all-electron basis sets or ECP basis sets.
+Currently, *Effective Core Potential* (ECP) basis sets are distinguished from *all-electron* basis sets only upon printing information.
 
-Any information regarding basis sets will be printed in the same manner, regardless of the type of the basis set.
+Both ECP and all-electron basis sets use the same parsing logic for gathering information. This means that the enumeration follows the same rules, and both types of basis sets are enumerated in the same way.
+
+The type of basis set is collected from the `PSEUDOPOTENTIAL INFORMATION` section of the output file.
+
+>**IMPORTANT NOTE:** <br> Tests with ECP basis sets were done using a [*Hay and Wadt Small-Core (HAYWSC) ECP for Ag atoms*](https://www.crystal.unito.it/Basis_Sets/silver.html#Ag_HAYWSC-2111d31G_kokalj_1998_unpub). <br> Problems indentifying other types of ECP basis sets are very unlikely, **but it may occur**. Please treat the results carefully when dealing with ECP basis sets, and make sure to comunicate any issues you found.
