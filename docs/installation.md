@@ -11,9 +11,15 @@
 
 ## 1. Requirements
 
-[![Status](https://img.shields.io/badge/Python-3.14.0-blue?logo=python)](https://www.python.org/downloads/)
+[![](https://img.shields.io/badge/Python-3.14.0-blue?logo=python)](https://www.python.org/downloads/)
 
 Check the version of your Python installation with `$ python --version`. <br> It may work with older versions, but you'll have to manually edit the scripts to do so. Do it at **your own risk**.
+
+[![](https://img.shields.io/badge/PyYAML-6.0.3-blue)](https://pypi.org/project/PyYAML/)
+
+It may work with older versions shipped with your Python installation. I have tested in a system with PyYAML 6.0.1 and it worked.
+
+Install with `$ apt install python3-yaml`.
 
 ## 2. Installation steps
 1. Download all contents from [src folder](../src/);
