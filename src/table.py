@@ -149,7 +149,7 @@ class Header:
 
 
 class TableColumnAlignment:
-    def __init__(self, table: Table) -> None:
+    def __init__(self, table: "Table") -> None:
         self._table = table
     
     def header(self, alignment: CellAlignment, column_index: int) -> None:
@@ -172,7 +172,7 @@ class TableColumnAlignment:
 
 
 class TableColumnSize:
-    def __init__(self, table: Table) -> None:
+    def __init__(self, table: "Table") -> None:
         self._table = table
     
     def header(self, size: int, column_index: int) -> None:
@@ -195,7 +195,7 @@ class TableColumnSize:
 
 
 class TableColumnStyle:
-    def __init__(self, table: Table) -> None:
+    def __init__(self, table: "Table") -> None:
         self._table = table
     
     def header(self, style: TextStyle, column_index: int) -> None:
@@ -218,7 +218,7 @@ class TableColumnStyle:
 
 
 class TableRowStyle:
-    def __init__(self, table: Table) -> None:
+    def __init__(self, table: "Table") -> None:
         self._table = table
     
     def header(self, style: TextStyle, row_index: int) -> None:
