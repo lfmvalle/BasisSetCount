@@ -3,6 +3,7 @@
 from time import perf_counter
 
 from arguments import parse_arguments
+from bootstrap import init_resources
 from exceptions import ApplicationException, unexpected_error
 from logger import Logger
 from output_parser import OutputParser
@@ -11,6 +12,9 @@ from text_style import TextStyle
 
 
 def main() -> None:
+    # initialize resources
+    init_resources()
+
     # parse the arguments in the script call
     arguments = parse_arguments()
     output_file = arguments.get_output_file()

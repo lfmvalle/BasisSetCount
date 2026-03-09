@@ -1,25 +1,10 @@
-from dataclasses import dataclass
-from pathlib import Path
-import json
-
+from element import Element
 from exceptions import PeriodicTableException
-
-
-@dataclass
-class Element:
-    symbol: str
-    atomic_number: int
 
 
 class PeriodicTable:
     elements: list[Element] = []
-    _json_path = Path(__file__).resolve().parent / "periodic_table.json"
     
-    with open(_json_path, "r", encoding="utf-8") as periodic_table:
-        for element_dict in json.load(periodic_table):
-            element = Element(element_dict["symbol"], int(element_dict["atomic_number"]))
-            elements.append(element)
-
     @classmethod
     def get_element(cls, key: str | int) -> Element:
         if isinstance(key, str):  # Lookup by symbol

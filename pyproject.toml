@@ -4,4 +4,6 @@ version = "0.1.0"
 description = "Parses CRYSTAL23 output files for basis set information and enumerates the atomic orbitals of atoms."
 readme = "README.md"
 requires-python = ">=3.14"
-dependencies = []
+dependencies = [
+    "pyyaml>=6.0.3",
+]
