@@ -1,8 +1,9 @@
 from arguments import *
 from atom import Atom
-from basis_set import FunctionType, AtomicFunctions
+from basis_set import FunctionType
 from crystal_output import CrystalOutput
 from logger import Logger
+from orbitals import AtomicOrbitals
 from table import Table, Header, Row, Cell, CellAlignment, CellContentType
 from text_style import TextStyle
 
@@ -152,12 +153,12 @@ class Printer:
             return []
         
         FUNCTION_MAP = {
-            FunctionType.S: AtomicFunctions.S.value,
-            FunctionType.SP: AtomicFunctions.SP.value,
-            FunctionType.P: AtomicFunctions.P.value,
-            FunctionType.D: AtomicFunctions.D.value,
-            FunctionType.F: AtomicFunctions.F.value,
-            FunctionType.G: AtomicFunctions.G.value,
+            FunctionType.S: AtomicOrbitals.S,
+            FunctionType.SP: AtomicOrbitals.SP,
+            FunctionType.P: AtomicOrbitals.P,
+            FunctionType.D: AtomicOrbitals.D,
+            FunctionType.F: AtomicOrbitals.F,
+            FunctionType.G: AtomicOrbitals.G,
         }
 
         # header - title
@@ -183,7 +184,7 @@ class Printer:
         table_header_row = Row([
             Cell("Atomic function", size=16, alignment=CellAlignment.CENTER),
             Cell("Index", size=16, alignment=CellAlignment.CENTER),
-            Cell("Atomic orbital", size=16, alignment=CellAlignment.CENTER)
+            Cell("Atomic orbital", size=16, alignment=CellAlignment.LEFT)
         ])
         table_header_row.add_style(TextStyle.BOLD)
         

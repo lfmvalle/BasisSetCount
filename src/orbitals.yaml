@@ -1,0 +1,36 @@
+# Atomic orbitals
+s:
+  - s
+sp:
+  - s
+  - x
+  - y
+  - z
+p:
+  - x
+  - y
+  - z
+d:
+  - z2
+  - xz
+  - yz
+  - x2y2
+  - xy
+f:
+  - z2z
+  - z2x
+  - z2y
+  - x2z
+  - xyz
+  - x2x
+  - x2y
+g:
+  - x4z2
+  - z2xz
+  - z2yz
+  - x2z2
+  - z2xy
+  - x2xz
+  - x2yz
+  - x4y4
+  - x2xy
