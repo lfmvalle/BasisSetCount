@@ -294,16 +294,22 @@ class OutputParser:
                 sum_element = PeriodicTable.get_element(int(sum_population[1]))
                 diff_element = PeriodicTable.get_element(int(diff_population[1]))
                 if not sum_element == atom.element:
-                    Logger.debug(f"Expected Z = {atom.element.atomic_number} for atom {atom.label} but found Z = {sum_element.atomic_number} in [bold]α+β population[/].")
-                    return False
+                    # is not ghost
+                    if not sum_element.atomic_number == 0:
+                        Logger.debug(f"Expected [purple]Z = {atom.element.atomic_number}[/] for [purple]Atom {atom.label}[/] but found [purple]Z = {sum_element.atomic_number}[/] in [bold]α+β population[/].")
+                        return False
                 if not diff_element == atom.element:
-                    Logger.debug(f"Expected [purple]Z = {atom.element.atomic_number}[/] for [purple]Atom {atom.label}[/], but found [purple]Z = {diff_element.atomic_number}[/] in [bold]α-β population[/].")
-                    return False
+                    # is not ghost
+                    if not sum_element.atomic_number == 0:
+                        Logger.debug(f"Expected [purple]Z = {atom.element.atomic_number}[/] for [purple]Atom {atom.label}[/], but found [purple]Z = {diff_element.atomic_number}[/] in [bold]α-β population[/].")
+                        return False
                 # There is a basis set for the element?
                 found_bs = [bs.element for bs in self.basis_sets]
                 if not sum_element in found_bs:
-                    Logger.debug(f"No basis set for [purple]Atom {atom.label}[/] with [purple]Z = {sum_element.atomic_number}[/].")
-                    return False
+                    # is not ghost
+                    if not sum_element.atomic_number == 0:
+                        Logger.debug(f"No basis set for [purple]Atom {atom.label}[/] with [purple]Z = {sum_element.atomic_number}[/].")
+                        return False
             return True
         except Exception as exc:
             Logger.debug("Unexpected error while checking [italic]Mulliken Population Analysis[/].")
