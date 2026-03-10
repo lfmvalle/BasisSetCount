@@ -10,6 +10,13 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [0.2.1] - 2026-03-10
+
+### Fixes
+- Mulliken population now compatible with ghost atoms.
+
+---
+
 ## [0.2.0] - 2026-03-10
 
 ### Added
