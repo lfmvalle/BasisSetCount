@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from decimal import Decimal
 from enum import IntEnum
 
 from periodic_table import Element
@@ -14,10 +15,10 @@ class FunctionType(IntEnum):
 
 @dataclass
 class PrimitiveFunction:
-    exponent: float
-    s_coeff: float
-    p_coeff: float
-    dfg_coeff: float
+    exponent: Decimal
+    s_coeff: Decimal
+    p_coeff: Decimal
+    dfg_coeff: Decimal
 
 @dataclass
 class BasisFunction:

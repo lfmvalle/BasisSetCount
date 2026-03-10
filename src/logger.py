@@ -1,7 +1,6 @@
 from enum import Enum
 
 import text_style
-from text_style import TextStyle
 
 
 class LogLevel(Enum):
@@ -17,20 +16,21 @@ class Logger:
 
     @staticmethod
     def _log_message(level: LogLevel, message: str) -> None:
-        log_string = f"{TextStyle.BOLD}"
+        log_string = f"[bold]"
         match level:
             case LogLevel.INFO:
-                log_string += f"[ INFO ]{TextStyle.NONE} "
+                log_string += f"[ INFO ][/] "
             case LogLevel.REQUEST:
-                log_string += f"{TextStyle.GREEN}[ REQUEST ]{TextStyle.NONE} "
+                log_string += f"[green][ REQUEST ][/] "
             case LogLevel.WARNING:
-                log_string += f"{TextStyle.YELLOW}[ WARNING ]{TextStyle.NONE} "
+                log_string += f"[yellow][ WARNING ][/] "
             case LogLevel.ERROR:
-                log_string += f"{TextStyle.RED}[ ERROR ]{TextStyle.NONE} "
+                log_string += f"[red][ ERROR ][/] "
             case LogLevel.DEBUG:
-                log_string += f"{TextStyle.PURPLE}[ DEBUG ]{TextStyle.NONE} "
+                log_string += f"[purple][ DEBUG ][/] "
         log_string += message
-        print(log_string)
+        log = text_style.parse_styles(log_string)
+        print(log)
 
     @classmethod
     def info(cls, message: str) -> None:

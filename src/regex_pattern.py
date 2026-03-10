@@ -10,3 +10,8 @@ GHOST_REGEX = re.compile(r"(\d+)\(\s+(\d+)\)")
 ATOM_REGEX = re.compile(r"\s+(\d+)\s+(\w+)\s+(-?\d+\.\d+)\s+(-?\d+\.\d+)\s+(-?\d+\.\d+)")
 FUNCTION_REGEX = re.compile(r"^\s+(\d+)?-?\s+(\d+)\s(\w+)\s+$")
 PRIMITIVE_REGEX = re.compile(r"\s?(-?\d\.\d+E[+-]\d\d)")
+MULLIKEN_ATOM_REGEX = re.compile(r"\s+(\d+)\s+")
+MULLIKEN_FLOAT3_REGEX = re.compile(r"[+-]?\d+\.\d{3}")
+
+# Text style
+STYLE_REGEX = r"\[([^\]]+)]"

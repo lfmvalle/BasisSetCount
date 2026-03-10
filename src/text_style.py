@@ -1,32 +1,68 @@
-from enum import Enum
+import re
+
+import regex_pattern
 
 
-class TextStyle(Enum):
-    NONE = "\033[0m"
-    BOLD = "\033[1m"
-    ITALIC = "\033[3m"
-    BOLDITALIC = "\033[1;3m"
-    DARK = "\033[2m"
-    RED = "\033[31m"
-    GREEN = "\033[32m"
-    YELLOW = "\033[33m"
-    BLUE = "\033[34m"
-    PURPLE = "\033[35m"
-    CYAN = "\033[36m"
-
-    def __add__(self, other: object) -> str:
-        if isinstance(other, TextStyle):
-            return f"{self.value}{other.value}"
-        if isinstance(other, str):
-            return f"{self.value}{other}"
-        raise TypeError("Adding TextStyle: object must be of type 'TextStyle' or 'str'.")
+def fetch_styles(styles: str) -> str:
+    """
+    Fetch the ANSI styles in a style string, returning a string with the ANSI styles found.
     
-    def __radd__(self, other: object) -> str:
-        if isinstance(other, TextStyle):
-            return f"{other.value}{self.value}"
-        if isinstance(other, str):
-            return f"{other}{self.value}"
-        raise TypeError("Adding TextStyle: object must be of type 'TextStyle' or 'str'.")
+    A *style string* is the string between a pair of [ ], describing style keywords separated by whitespaces, such as:
+    `[bold italic blue]`
+    """
+    styles = styles.strip()
+    if not styles:
+        return ""
     
-    def __str__(self) -> str:
-        return self.value
+    split = styles.split(" ")
+    if len(split) == 0:
+        return ""
+    
+    STYLE_MAP = {
+        "/": "\033[0m",
+        "bold": "\033[1m",
+        "dim": "\033[2m",
+        "italic": "\033[3m",
+        "gray": "\033[30m",
+        "red": "\033[31m",
+        "green": "\033[32m",
+        "yellow": "\033[33m",
+        "blue": "\033[34m",
+        "purple": "\033[35m",
+        "cyan": "\033[36m",
+        "white": "\033[37m",
+    }
+
+    style_string = ""
+    for s in split:
+        try:
+            style_string += STYLE_MAP[s]
+        except KeyError:  # not a style string, return the same input
+            return styles
+    return style_string
+
+def parse_styles(string: str) -> str:
+    """
+    Parses a string containing styles and returns the string with proper ANSI color styling.
+
+    Example:
+    `"This is [bold]bold text[/]."` returns `"This is \\033[1mbold text\\033[0m."`
+    """
+    styles = re.findall(regex_pattern.STYLE_REGEX, string)
+    if len(styles) == 0:
+        return string
+    
+    m = string
+    for style in styles:
+        style_string = fetch_styles(style)
+        if style_string == style.strip():  # if is the same string, it is not a style string
+            continue
+        m = m.replace(f"[{style}]", style_string, count=1)
+    
+    return m
+
+def printf(string: str):
+    """
+    A wrapper for printing strings with styles.
+    """
+    print(parse_styles(string))

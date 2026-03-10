@@ -1,9 +1,9 @@
+from decimal import Decimal
 from enum import Enum
 from typing import Optional
 
 from exceptions import CellException, TableException
-from text_style import TextStyle
-
+import text_style
 
 class CellContentType(Enum):
     TEXT = "s"
@@ -21,7 +21,7 @@ class CellAlignment(Enum):
     CENTER_SPACE_PADDING = "^ "
 
 
-type CellContent = str | int | float
+type CellContent = str | int | float | Decimal
 
 
 class Cell:
@@ -30,13 +30,13 @@ class Cell:
                  content_type: CellContentType = CellContentType.TEXT,
                  alignment: CellAlignment = CellAlignment.LEFT,
                  size: int = 8,
-                 style: TextStyle | str = TextStyle.NONE,
+                 style: Optional[str] = None,
                  precision: Optional[int] = None) -> None:
         self.content = content
         self.content_type = content_type
         self.alignment = alignment
         self.size = size
-        self.style = style
+        self.style = style if style is not None else ""
         self.precision = precision
     
     def _validate_cell(self) -> None:
@@ -55,12 +55,12 @@ class Cell:
                 if self.content and not isinstance(self.content, int):
                     raise CellException(f"Content of DIGIT cell must be of type 'int'.")
             case CellContentType.DECIMAL:
-                if self.content and not isinstance(self.content, float):
+                if self.content and not (isinstance(self.content, float) or isinstance(self.content, Decimal)):
                     raise CellException(f"Content of DECIMAL cell must be of type 'float'.")
                 if not self.precision:
                     raise CellException("DECIMAL cell must have a precision.")
             case CellContentType.BASE10:
-                if self.content and not isinstance(self.content, float):
+                if self.content and not (isinstance(self.content, float) or isinstance(self.content, Decimal)):
                     raise CellException(f"Content of BASE10 cell must be of type 'float'.")
                 if not self.precision:
                     raise CellException("BASE10 cell must have a precision.")
@@ -87,10 +87,10 @@ class Cell:
         
         # Format the cell content
         cell_content = f"{self.content:{format}}" if self.content else f"{"":{format}}"
-        
-        final_string = f"{self.style}{cell_content}{TextStyle.NONE}"
-        
-        return final_string
+        if self.style:
+            final_string = f"[{self.style}]{cell_content}[/]"
+            return text_style.parse_styles(final_string)
+        return cell_content
     
     def __str__(self) -> str:
         return self.render()
@@ -107,9 +107,9 @@ class Row:
             size += cell.size
         return size
     
-    def add_style(self, style: TextStyle) -> None:
+    def add_style(self, style: str) -> None:
         for cell in self.cells:
-            cell.style += style
+            cell.style += f" {style}"
     
     def render(self) -> str:
         contents = ""
@@ -198,21 +198,21 @@ class TableColumnStyle:
     def __init__(self, table: "Table") -> None:
         self._table = table
     
-    def header(self, style: TextStyle, column_index: int) -> None:
+    def header(self, style: str, column_index: int) -> None:
         try:
             for row in self._table.header.rows:
-                row.cells[column_index].style += style
+                row.cells[column_index].style += f" {style}"
         except IndexError:
             return
     
-    def content(self, style: TextStyle, column_index: int) -> None:
+    def content(self, style: str, column_index: int) -> None:
         try:
             for row in self._table.rows:
-                row.cells[column_index].style += style
+                row.cells[column_index].style += f" {style}"
         except IndexError:
             return
     
-    def table(self, style: TextStyle, column_index: int) -> None:
+    def table(self, style: str, column_index: int) -> None:
         self.header(style, column_index)
         self.content(style, column_index)
 
@@ -221,19 +221,19 @@ class TableRowStyle:
     def __init__(self, table: "Table") -> None:
         self._table = table
     
-    def header(self, style: TextStyle, row_index: int) -> None:
+    def header(self, style: str, row_index: int) -> None:
         try:
             self._table.header.rows[row_index].add_style(style)
         except IndexError:
             return
     
-    def content(self, style: TextStyle, row_index: int) -> None:
+    def content(self, style: str, row_index: int) -> None:
         try:
             self._table.rows[row_index].add_style(style)
         except IndexError:
             return
     
-    def table(self, style: TextStyle, row_index: int) -> None:
+    def table(self, style: str, row_index: int) -> None:
         self.header(style, row_index)
         self.content(style, row_index)
 
@@ -247,26 +247,26 @@ class Table:
         self.add_column_style = TableColumnStyle(self)
         self.add_row_style = TableRowStyle(self)
        
-    def add_style_to_header_row(self, style: TextStyle, row: int) -> None:
+    def add_style_to_header_row(self, style: str, row: int) -> None:
         try:
             for cell in self.header.rows[row].cells:
-                cell.style += style
+                cell.style += f" {style}"
         except IndexError:
             return
     
-    def add_style_to_content_row(self, style: TextStyle, row: int) -> None:
+    def add_style_to_content_row(self, style: str, row: int) -> None:
         try:
             for cell in self.rows[row].cells:
-                cell.style += style
+                cell.style += f" {style}"
         except IndexError:
             return
     
-    def add_style_to_odd_content_rows(self, style: TextStyle) -> None:
+    def add_style_to_odd_content_rows(self, style: str) -> None:
         for i in range(len(self.rows)):
             if i % 2 != 0:
                 self.add_style_to_content_row(style, i)
     
-    def add_style_to_even_content_rows(self, style: TextStyle) -> None:
+    def add_style_to_even_content_rows(self, style: str) -> None:
         for i in range(len(self.rows)):
             if i % 2 == 0:
                 self.add_style_to_content_row(style, i)
@@ -285,7 +285,7 @@ class Table:
 
 
 if __name__ == "__main__":
-    cell1 = Cell("a", size=16, style=TextStyle.BOLDITALIC)
+    cell1 = Cell("a", size=16, style="bold italic")
     cell2 = Cell("b", alignment=CellAlignment.CENTER)
     cell3 = Cell("c", alignment=CellAlignment.RIGHT, size=16)
     cell4 = Cell(1.12345, CellContentType.DECIMAL, precision=1, size=16)
@@ -297,7 +297,7 @@ if __name__ == "__main__":
     header = Header([row1])
     contents = [row2, row2, row2, row2, row2, row2]
     table = Table(header, contents)
-    table.add_column_style.table(TextStyle.GREEN, 1)
-    table.add_column_style.header(TextStyle.BLUE, 0)
+    table.add_column_style.table("green", 1)
+    table.add_column_style.header("blue", 0)
     
     print(table)

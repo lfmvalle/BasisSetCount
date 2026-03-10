@@ -4,8 +4,8 @@ from basis_set import FunctionType
 from crystal_output import CrystalOutput
 from logger import Logger
 from orbitals import AtomicOrbitals
+from population_analysis import AlphaBetaPair
 from table import Table, Header, Row, Cell, CellAlignment, CellContentType
-from text_style import TextStyle
 
 
 class Printer:
@@ -40,11 +40,11 @@ class Printer:
                 Cell(f"{last_count + 1: d}-{local_count}")
             ])
             if atom.is_ghost:
-                atom_row.add_style(TextStyle.PURPLE)
+                atom_row.add_style("purple")
             table.rows.append(atom_row)
             last_count = local_count
         # format table
-        table.add_row_style.header(TextStyle.BOLD, 0)
+        table.add_row_style.header("bold", 0)
         table.set_column_alignment.table(CellAlignment.LEFT, 0)
         table.set_column_alignment.table(CellAlignment.CENTER, 1)
         table.set_column_alignment.table(CellAlignment.CENTER_SPACE_PADDING, 2)
@@ -76,15 +76,13 @@ class Printer:
             title_row = Row([
                 Cell(title, alignment=CellAlignment.CENTER, size=80),
             ])
-            title_row.add_style(TextStyle.BOLD)
-            title_row.add_style(TextStyle.PURPLE)
+            title_row.add_style("bold purple")
 
             # header - atoms using the basis set
             atoms_using_row = Row([
                 Cell(f"Used by {atoms_using} atoms", alignment=CellAlignment.CENTER, size=80)
             ])
-            atoms_using_row.add_style(TextStyle.BOLD)
-            atoms_using_row.add_style(TextStyle.PURPLE)
+            atoms_using_row.add_style("bold purple")
 
             # header - separator
             separator = Row([
@@ -99,7 +97,7 @@ class Printer:
                 Cell("p coeff.", alignment=CellAlignment.CENTER, size=16),
                 Cell("d/f/g coeff.", alignment=CellAlignment.CENTER, size=16)
             ])
-            table_header_row.add_style(TextStyle.BOLD)
+            table_header_row.add_style("bold")
             header = Header([title_row, atoms_using_row, separator, table_header_row])
             table = Table(header, [])
 
@@ -141,12 +139,27 @@ class Printer:
         return tables
     
     @staticmethod
-    def _new_atomic_function_row(index: int, function: str) -> Row:
+    def _new_atomic_function_row(index: int, function: str, pop: Optional[AlphaBetaPair]) -> Row:
+        if not pop:
+            return Row([
+                Cell(),
+                Cell(index, content_type=CellContentType.DIGIT),
+                Cell(function),
+                Cell(),
+                Cell(),
+                Cell(),
+                Cell(),
+            ])
+        
         return Row([
-            Cell(),
-            Cell(index, content_type=CellContentType.DIGIT),
-            Cell(function),
-        ])
+                Cell(),
+                Cell(index, content_type=CellContentType.DIGIT),
+                Cell(function),
+                Cell(pop.alpha + pop.beta, content_type=CellContentType.DECIMAL, precision=3),
+                Cell(pop.alpha - pop.beta, content_type=CellContentType.DECIMAL, precision=3),
+                Cell(pop.alpha, content_type=CellContentType.DECIMAL, precision=4),
+                Cell(pop.beta, content_type=CellContentType.DECIMAL, precision=4),
+            ]) 
     
     def _count_atom(self, sum: int, atom: Atom) -> list[Table]:
         if atom.basis_set is None:
@@ -163,51 +176,72 @@ class Printer:
 
         # header - title
         title_row = Row([
-            Cell(f"Atom {atom.label} - {atom.element.symbol} (ghost)" if atom.is_ghost else f"Atom {atom.label} - {atom.element.symbol}", size=48, alignment=CellAlignment.CENTER)
+            Cell(f"Atom {atom.label} - {atom.element.symbol} (ghost)" if atom.is_ghost else f"Atom {atom.label} - {atom.element.symbol}", size=48, alignment=CellAlignment.CENTER),
+            Cell("Mulliken Population", size=48, alignment=CellAlignment.CENTER)
         ])
-        title_row.add_style(TextStyle.BOLD)
-        title_row.add_style(TextStyle.PURPLE)
+        title_row.add_style("bold purple")
 
         # header - basis set type
         basis_set_type_row = Row([
-            Cell("Effective Core Potential basis set" if atom.basis_set.pseudo else "All-electron basis set", size=48, alignment=CellAlignment.CENTER)
+            Cell("Effective Core Potential basis set" if atom.basis_set.pseudo else "All-electron basis set", size=48, alignment=CellAlignment.CENTER),
+            Cell("" if self.output.atoms[0].mulliken else "not available in output", size=48, alignment=CellAlignment.CENTER)
         ])
-        basis_set_type_row.add_style(TextStyle.BOLD)
-        basis_set_type_row.add_style(TextStyle.PURPLE)
+        basis_set_type_row.add_style("bold purple")
 
         # header - separator
         separator = Row([
-            Cell("-" * 48, size=48)
+            Cell("-" * 96, size=96)
         ])
 
         # header - table columns
         table_header_row = Row([
             Cell("Atomic function", size=16, alignment=CellAlignment.CENTER),
             Cell("Index", size=16, alignment=CellAlignment.CENTER),
-            Cell("Atomic orbital", size=16, alignment=CellAlignment.LEFT)
+            Cell("Atomic orbital", size=16, alignment=CellAlignment.LEFT),
+            Cell("α + β", size=12, alignment=CellAlignment.CENTER),
+            Cell("α - β", size=12, alignment=CellAlignment.CENTER),
+            Cell("α", size=12, alignment=CellAlignment.CENTER),
+            Cell("β", size=12, alignment=CellAlignment.CENTER),
         ])
-        table_header_row.add_style(TextStyle.BOLD)
+        table_header_row.add_style("bold")
         
         header = Header([title_row, basis_set_type_row, separator, table_header_row])
         table = Table(header, [])
 
+        mul_idx = 0
         for basis_function in atom.basis_set.basis_functions:
             funcion_row = Row([
                 Cell(basis_function.function_type.name),
+                Cell(),
+                Cell(),
+                Cell(), # mulliken
+                Cell(),
                 Cell(),
                 Cell(),
             ])
             table.rows.append(funcion_row)
             for function in FUNCTION_MAP[basis_function.function_type]:
                 sum += 1
-                orbital_row = self._new_atomic_function_row(sum, function)
+                if atom.mulliken:
+                    orbital_row = self._new_atomic_function_row(sum, function, atom.mulliken.orbitals[mul_idx])
+                    mul_idx += 1
+                else:
+                    orbital_row = self._new_atomic_function_row(sum, function, None)
                 table.rows.append(orbital_row)
         table.set_column_alignment.content(CellAlignment.CENTER, 0)
         table.set_column_alignment.content(CellAlignment.CENTER, 1)
         table.set_column_alignment.content(CellAlignment.LEFT, 2)
+        table.set_column_alignment.content(CellAlignment.CENTER_SPACE_PADDING, 3)  # mulliken
+        table.set_column_alignment.content(CellAlignment.CENTER_SPACE_PADDING, 4)
+        table.set_column_alignment.content(CellAlignment.CENTER_SPACE_PADDING, 5)
+        table.set_column_alignment.content(CellAlignment.CENTER_SPACE_PADDING, 6)
         table.set_column_size.content(16, 0)
         table.set_column_size.content(16, 1)
         table.set_column_size.content(16, 2)
+        table.set_column_size.content(12, 3)
+        table.set_column_size.content(12, 4)
+        table.set_column_size.content(12, 5)
+        table.set_column_size.content(12, 6)
         return [table]
     
     def _parse_atom(self, label: int) -> list[Table]:
@@ -227,13 +261,13 @@ class Printer:
         return tables
 
     def _parse_number_argument(self, arg: NumberArgument) -> list[Table]:
-        Logger.debug(f"Parsing number argument: {TextStyle.PURPLE}{arg.value}{TextStyle.NONE}")
-        Logger.request(f"Enumeration for {TextStyle.PURPLE}Atom {arg.value}{TextStyle.NONE}:")
+        Logger.debug(f"Parsing number argument: [purple]{arg.value}[/]")
+        Logger.request(f"Enumeration for [purple]Atom {arg.value}[/]:")
         return self._parse_atom(int(arg.value))
     
     def _parse_range_argument(self, arg: RangeArgument) -> list[Table]:
-        Logger.debug(f"Parsing range argument: {TextStyle.PURPLE}{arg.value}{TextStyle.NONE}")
-        Logger.request(f"Enumeration for {TextStyle.PURPLE}Atoms {arg.value}{TextStyle.NONE}:")
+        Logger.debug(f"Parsing range argument: [purple]{arg.value}[/]")
+        Logger.request(f"Enumeration for [purple]Atoms {arg.value}[/]:")
         limits = arg.value.split("-")
         x, y = int(limits[0]), int(limits[1]) + 1
         tables: list[Table] = []
@@ -246,7 +280,7 @@ class Printer:
         return tables
 
     def _parse_parameter_argument(self, arg: ParameterArgument) -> list[Table]:
-        Logger.debug(f"Parsing parameter argument: {TextStyle.PURPLE}{arg.value}{TextStyle.NONE}")
+        Logger.debug(f"Parsing parameter argument: [purple]{arg.value}[/]")
         if arg.value == "-a":
             return self._atoms_info()
         elif arg.value == "-b":

@@ -2,9 +2,13 @@
 
 This script reads a **CRYSTAL23** output file and retrieves information about atoms and unique basis sets. It also **enumerates** the atomic orbitals of individual atoms - a tedious and time-consuming task when done manually.
 
+---
+
 ## How to install
 
 Follow [these steps](docs/installation.md) to install and use this script.
+
+---
 
 ## Usage
 
@@ -14,8 +18,13 @@ Follow [these steps](docs/installation.md) to install and use this script.
 
 [Nomenclature of atomic orbitals](docs/nomenclature.md)
 
+---
 ## Other topics
 
 [Effective Core Potential basis sets](docs/ecp.md)
 
 [Ghost atoms](docs/ghost.md)
+
+---
+
+[Changelog](docs/changelog.md)
